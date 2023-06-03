@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
 from config import config
+from validations import *
 
 app = Flask(__name__)
 
@@ -9,17 +10,20 @@ conexion = MySQL(app)
 
 @app.route("/cliente", methods=["POST"])
 def index():
-    try:
-        # print(request.json)
-        sql = "INSERT INTO clientes (code, name) VALUES ('{0}', '{1}')".format(
-            request.json["code"], request.json["name"]
-        )
-        cursor = conexion.connection.cursor()
-        cursor.execute(sql)
-        conexion.connection.commit()  # Confirma la acción de inserción.
-        return jsonify({"mensaje": "Cliente registrado con exito.", "exito": True})
-    except Exception as ex:
-        return jsonify({"mensaje": "Error", "exito": False})
+    if (validate_code(request.json['code'])):
+        try:
+            # print(request.json)
+            sql = "INSERT INTO clientes (code, name) VALUES ('{0}', '{1}')".format(
+                request.json["code"], request.json["name"]
+            )
+            cursor = conexion.connection.cursor()
+            cursor.execute(sql)
+            conexion.connection.commit()  # Confirma la acción de inserción.
+            return jsonify({"mensaje": "Cliente registrado con exito.", "exito": True})
+        except Exception as ex:
+            return jsonify({"mensaje": "Error", "exito": False})
+    else:
+        return jsonify({'mensaje': "Parámetros incorrectos...", 'exito': False})
 
 
 def page_not_found(error):
