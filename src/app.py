@@ -12,13 +12,12 @@ conexion = MySQL(app)
 def index():
     if (validate_code(request.json['code'])):
         try:
-            # print(request.json)
             sql = "INSERT INTO clientes (code, name) VALUES ('{0}', '{1}')".format(
                 request.json["code"], request.json["name"]
             )
             cursor = conexion.connection.cursor()
             cursor.execute(sql)
-            conexion.connection.commit()  # Confirma la acción de inserción.
+            conexion.connection.commit()
             return jsonify({"mensaje": "Cliente registrado con exito.", "exito": True})
         except Exception as ex:
             return jsonify({"mensaje": "Error", "exito": False})
