@@ -1,5 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
+import sys
+
+sys.path.append('src')
 from config import config
 from validations import *
 
